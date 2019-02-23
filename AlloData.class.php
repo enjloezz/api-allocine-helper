@@ -1,4 +1,9 @@
 <?php
+    namespace enjloezz\ApiAllocineHelper;
+    use ErrorException;
+    use ArrayAccess;
+    use SeekableIterator;
+    use Countable;
 
     /**
     * Manipuler facilement les données reçues.
@@ -6,6 +11,8 @@
     * 
     * @implements ArrayAccess, SeekableIterator, Countable
     */
+
+
 
     class AlloData implements ArrayAccess, SeekableIterator, Countable
     {

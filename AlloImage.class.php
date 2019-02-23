@@ -1,12 +1,11 @@
 <?php
-
-    /**
-    * Manipuler facilement les URLs des images.
-    */
+    namespace enjloezz\ApiAllocineHelper;
+    use AlloHelper;
+    use ErrorException;
 
     class AlloImage
     {
-        
+
         /**
          * Répertoire de l'image par défaut
          * @const string

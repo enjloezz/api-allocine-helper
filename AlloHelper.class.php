@@ -1,9 +1,17 @@
 <?php
-
+    namespace enjloezz\ApiAllocineHelper;
+    use ErrorException;
     /**
     * Exécuter les requêtes et traiter les données.
     */
-    
+    define('ALLOCINE_SECRET_KEY', '29d185d98c984a359e6e6f26a0474269');
+    define('ALLO_DEFAULT_URL_API', "api.allocine.fr");
+    define('ALLO_DEFAULT_URL_IMAGES', "images.allocine.fr");
+    define('ALLO_THROW_EXCEPTIONS', true);
+    define('ALLO_UTF8_DECODE', true);
+    define('ALLO_PARTNER', '100043982026');
+    define('ALLO_AUTO_CORRECT_APOSTROPHES', true);
+
     class AlloHelper
     {
 
@@ -11,7 +19,7 @@
          * Contient la dernière ErrorException
          * @var ErrorException|null
          */
-        
+
         public static $_lastError;
 
         /**
@@ -236,7 +244,7 @@
             $params['filter'] = isset($params['filter']) ? implode(",", $params['filter']) : null;
 
             $queryURL = $this->APIUrl . '/' . $type;
-                  $searchQuery = str_replace('%2B', '+', http_build_query($params)) . '&sed=' . date('Ymd');
+                  $searchQuery = http_build_query($params) . '&sed=' . date('Ymd');
                   $toEncrypt = $this->allocineSecretKey . $searchQuery;
                   $sig = urlencode(base64_encode(sha1($toEncrypt, true)));
                   $queryURL .= '?' . $searchQuery . '&sig=' . $sig;
@@ -405,7 +413,7 @@
             {
                 if (empty($data['error']))
                     // On retourne les données
-                    if (class_exists('AlloData'))
+                    if (class_exists(AlloData::class))
                         return new AlloData($data[$container], $this->utf8Decode);
                     else
                         return $data;
@@ -434,7 +442,7 @@
          * @throws ErrorException
          */
         
-        public function search($q, $page = 1, $count = 10, $sortMovies = false, array $filter = array(), &$url = null)
+        public function search($q, $page = 1, $count = 20, $sortMovies = false, array $filter = array(), &$url = null)
         {
             
             // Traitement de la chaîne de recherche
@@ -443,10 +451,6 @@
                 $this->error("The keywords should contain more than one character.", 4);
                 return false;
             }
-            
-            $accents = "àáâãäçèéêëìíîïñòóôõöùúûüýÿ'";
-            $normal  = 'aaaaaceeeeiiiinooooouuuuyy ';
-            $q = utf8_encode(strtr(strtolower(trim($q)), $accents, $normal));
             
             // Préréglages
             $this->set(array(
@@ -529,9 +533,9 @@
                     foreach ($data['results'] as $r)
                         $data['results'][$r['type']] = (int) $r['$'];
                 }
-                
+
                 // On retourne les données
-                if (class_exists('AlloData'))
+                if (class_exists(AlloData::class))
                     return new AlloData($data, $this->utf8Decode);
                 else
                     return $data;
